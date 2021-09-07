@@ -1,4 +1,4 @@
-FROM ruby:2.6.6-slim AS builder
+FROM ruby:2.6.8-slim AS builder
 # note: zammad is currently incompatible to alpine because of:
 # https://github.com/docker-library/ruby/issues/113
 
@@ -9,6 +9,7 @@ ENV GIT_BRANCH colpari-develop
 ENV GIT_URL ${PROJECT_URL}.git
 ENV PROJECT_URL https://github.com/colpari/zammad
 ENV RAILS_ENV production
+ENV RAILS_LOG_TO_STDOUT true
 ENV TAR_GZ_URL ${PROJECT_URL}/archive/${GIT_BRANCH}.tar.gz
 ENV ZAMMAD_DIR /opt/zammad
 ENV ZAMMAD_READY_FILE ${ZAMMAD_DIR}/tmp/zammad.ready
@@ -23,7 +24,7 @@ RUN chmod +x /tmp/setup.sh; \
     /tmp/setup.sh builder
 
 
-FROM ruby:2.6.6-slim
+FROM ruby:2.6.8-slim
 
 ARG BUILD_DATE
 ARG DEBIAN_FRONTEND=noninteractive
@@ -36,11 +37,12 @@ LABEL org.label-schema.build-date="$BUILD_DATE" \
       org.label-schema.vcs-url="https://github.com/colpari/zammad" \
       org.label-schema.vcs-type="Git" \
       org.label-schema.vendor="colpari" \
-      org.label-schema.schema-version="3.6.0" \
+      org.label-schema.schema-version="4.1.0" \
       org.label-schema.docker.cmd="sysctl -w vm.max_map_count=262144;docker-compose up"
 
 ENV GIT_BRANCH colpari-develop
 ENV RAILS_ENV production
+ENV RAILS_LOG_TO_STDOUT true
 ENV ZAMMAD_DIR /opt/zammad
 ENV ZAMMAD_READY_FILE ${ZAMMAD_DIR}/tmp/zammad.ready
 ENV ZAMMAD_TMP_DIR /tmp/zammad-${GIT_BRANCH}
