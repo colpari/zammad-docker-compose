@@ -2,43 +2,51 @@ version: '2'
 
 services:
 
-  zammad-backup:
-    command: ["zammad-backup"]
-    depends_on:
-      - zammad-railsserver
-    entrypoint: /usr/local/bin/backup.sh
-    environment:
-      - BACKUP_SLEEP=86400
-      - HOLD_DAYS=10
-      - POSTGRESQL_USER=${POSTGRES_USER}
-      - POSTGRESQL_PASSWORD=${POSTGRES_PASS}
-    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
-    links:
-      - zammad-postgresql
-    restart: ${RESTART}
-    volumes:
-      - zammad-backup:/var/tmp/zammad
-      - zammad-data:/opt/zammad
+#  zammad-backup:
+#    command: ["zammad-backup"]
+#    depends_on:
+#      - zammad-railsserver
+#    entrypoint: /usr/local/bin/backup.sh
+#    environment:
+#      - BACKUP_SLEEP=86400
+#      - HOLD_DAYS=10
+#      - POSTGRESQL_USER=${POSTGRES_USER}
+#      - POSTGRESQL_PASSWORD=${POSTGRES_PASS}
+#    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
+#    links:
+#      - zammad-postgresql
+#    restart: ${RESTART}
+#    volumes:
+#      - zammad-backup:/var/tmp/zammad
+#      - zammad-data:/opt/zammad
 
-  zammad-elasticsearch:
-    environment:
-      - discovery.type=single-node
-    image: ${IMAGE_REPO}:zammad-elasticsearch${VERSION}
-    restart: ${RESTART}
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
+#  zammad-elasticsearch:
+#    environment:
+#      - discovery.type=single-node
+#    image: ${IMAGE_REPO}:zammad-elasticsearch${VERSION}
+#    restart: ${RESTART}
+#    volumes:
+#      - elasticsearch-data:/usr/share/elasticsearch/data
 
   zammad-init:
     command: ["zammad-init"]
-    depends_on:
-      - zammad-postgresql
+#    depends_on:
+#      - zammad-postgresql
     environment:
       - POSTGRESQL_USER=${POSTGRES_USER}
       - POSTGRESQL_PASS=${POSTGRES_PASS}
+      - POSTGRESQL_DB
+      - POSTGRESQL_HOST
+      - POSTGRESQL_PORT
+      - POSTGRESQL_DB_CREATE
+      - ELASTICSEARCH_HOST
+      - ELASTICSEARCH_PORT
+      - ELASTICSEARCH_SCHEMA
+      - ELASTICSEARCH_NAMESPACE
     image: ${IMAGE_REPO}:zammad${VERSION}
-    links:
-      - zammad-elasticsearch
-      - zammad-postgresql
+#    links:
+#      - zammad-elasticsearch
+#      - zammad-postgresql
     restart: on-failure
     volumes:
       - zammad-data:/opt/zammad
@@ -50,8 +58,8 @@ services:
 
   zammad-nginx:
     command: ["zammad-nginx"]
-    expose:
-      - "8080"
+#    expose:
+#      - "8080"
     depends_on:
       - zammad-railsserver
     image: ${IMAGE_REPO}:zammad${VERSION}
@@ -62,25 +70,25 @@ services:
     volumes:
       - zammad-data:/opt/zammad
 
-  zammad-postgresql:
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASS}
-    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
-    restart: ${RESTART}
-    volumes:
-      - postgresql-data:/var/lib/postgresql/data
+#  zammad-postgresql:
+#    environment:
+#      - POSTGRES_USER=${POSTGRES_USER}
+#      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+#    image: ${IMAGE_REPO}:zammad-postgresql${VERSION}
+#    restart: ${RESTART}
+#    volumes:
+#      - postgresql-data:/var/lib/postgresql/data
 
   zammad-railsserver:
     command: ["zammad-railsserver"]
     depends_on:
       - zammad-memcached
-      - zammad-postgresql
+#      - zammad-postgresql
     image: ${IMAGE_REPO}:zammad${VERSION}
     links:
-      - zammad-elasticsearch
+#      - zammad-elasticsearch
       - zammad-memcached
-      - zammad-postgresql
+#      - zammad-postgresql
     restart: ${RESTART}
     volumes:
       - zammad-data:/opt/zammad
@@ -92,9 +100,9 @@ services:
       - zammad-railsserver
     image: ${IMAGE_REPO}:zammad${VERSION}
     links:
-      - zammad-elasticsearch
+#      - zammad-elasticsearch
       - zammad-memcached
-      - zammad-postgresql
+#      - zammad-postgresql
     restart: ${RESTART}
     volumes:
       - zammad-data:/opt/zammad
@@ -106,18 +114,18 @@ services:
       - zammad-railsserver
     image: ${IMAGE_REPO}:zammad${VERSION}
     links:
-      - zammad-postgresql
+#      - zammad-postgresql
       - zammad-memcached
     restart: ${RESTART}
     volumes:
       - zammad-data:/opt/zammad
 
 volumes:
-  elasticsearch-data:
-    driver: local
-  postgresql-data:
-    driver: local
-  zammad-backup:
-    driver: local
+#  elasticsearch-data:
+#    driver: local
+#  postgresql-data:
+#    driver: local
+#  zammad-backup:
+#    driver: local
   zammad-data:
     driver: local
