@@ -3,13 +3,11 @@ name: ci-remote-image
 
 on:
   pull_request:
-    paths:
-      - '.env'
 
 jobs:
   run-remote-image-docker-compose:
     timeout-minutes: 20
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
